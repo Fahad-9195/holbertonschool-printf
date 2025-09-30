@@ -1,16 +1,16 @@
 #include "main.h"
 
 /**
- * _printf - a simple version of printf
- * @format: the string with text and format specifiers
- * Return: number of characters printed
+ * _printf - simplified printf function
+ * @format: string with text and format specifiers
+ * Return: number of characters printed (or -1 on error)
  */
 int _printf(const char *format, ...)
 {
     va_list args;
-    int i = 0;
-    int count = 0;
+    int i = 0, count = 0;
     char c;
+    char *s;
 
     if (format == NULL)
         return (-1);
@@ -30,16 +30,14 @@ int _printf(const char *format, ...)
             }
             else if (format[i] == 's')
             {
-                char *str = va_arg(args, char *);
-                int j = 0;
-
-                if (str == NULL)
-                    str = "(null)";
-                while (str[j] != '\0')
+                s = va_arg(args, char *);
+                if (s == NULL)
+                    s = "(null)";
+                while (*s)
                 {
-                    write(1, &str[j], 1);
+                    write(1, s, 1);
                     count++;
-                    j++;
+                    s++;
                 }
             }
             else if (format[i] == '%')
@@ -49,6 +47,7 @@ int _printf(const char *format, ...)
             }
             else
             {
+                /* If anything is unknown, type a letter. */
                 write(1, "%", 1);
                 write(1, &format[i], 1);
                 count += 2;
