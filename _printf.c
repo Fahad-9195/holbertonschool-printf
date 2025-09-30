@@ -3,7 +3,7 @@
 /**
  * print_char - prints one char
  * @c: character
- * Return: 1 on success, -1 on write error
+ * Return: 1 on success, -1 on error
  */
 int print_char(char c)
 {
@@ -13,13 +13,13 @@ int print_char(char c)
 }
 
 /**
- * print_string - prints a C string (handles NULL)
+ * print_string - prints a string (NULL -> "(null)")
  * @s: string
- * Return: number of chars, -1 on write error
+ * Return: chars printed, -1 on error
  */
 int print_string(const char *s)
 {
-	int cnt = 0;
+	int n = 0;
 
 	if (s == NULL)
 		s = "(null)";
@@ -27,17 +27,17 @@ int print_string(const char *s)
 	{
 		if (write(1, s, 1) != 1)
 			return (-1);
-		cnt++;
+		n++;
 		s++;
 	}
-	return (cnt);
+	return (n);
 }
 
 /**
  * handle_specifier - handles %c, %s, %%
  * @ap: va_list pointer
- * @sp: specifier char
- * Return: chars printed or -1 on error
+ * @sp: specifier
+ * Return: chars printed, -1 on error
  */
 int handle_specifier(va_list *ap, char sp)
 {
@@ -59,7 +59,30 @@ int handle_specifier(va_list *ap, char sp)
 	/* unknown specifier, just print it */
 	if (print_char('%') == -1)
 		return (-1);
-	return (print_char(sp) == -1 ? -1 : 2);
+	if (print_char(sp) == -1)
+		return (-1);
+	return (2);
+}
+
+/**
+ * process_percent - processes a % sequence starting at format[*i]
+ * @format: format string
+ * @i: index (will be advanced)
+ * @ap: va_list pointer
+ * Return: chars printed, or -1 on error
+ */
+static int process_percent(const char *format, int *i, va_list *ap)
+{
+	int r;
+
+	(*i)++;
+	if (format[*i] == '\0')
+		return (-1);
+	r = handle_specifier(ap, format[*i]);
+	if (r == -1)
+		return (-1);
+	(*i)++;
+	return (r);
 }
 
 /**
@@ -76,7 +99,6 @@ int _printf(const char *format, ...)
 		return (-1);
 
 	va_start(ap, format);
-
 	while (format[i] != '\0')
 	{
 		if (format[i] != '%')
@@ -90,24 +112,14 @@ int _printf(const char *format, ...)
 			i++;
 			continue;
 		}
-
-		i++;
-		if (format[i] == '\0')
-		{
-			va_end(ap);
-			return (-1);
-		}
-
-		r = handle_specifier(&ap, format[i]);
+		r = process_percent(format, &i, &ap);
 		if (r == -1)
 		{
 			va_end(ap);
 			return (-1);
 		}
 		total += r;
-		i++;
 	}
-
 	va_end(ap);
 	return (total);
 }
