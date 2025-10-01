@@ -1,6 +1,12 @@
 #include "main.h"
 #include <unistd.h>
 
+/**
+ * print_int - Print a signed integer to stdout.
+ * @ap: Variadic arguments list (expects an int).
+ *
+ * Return: Number of printed characters, or -1 on error.
+ */
 int print_int(va_list ap)
 {
 	long n = va_arg(ap, int);

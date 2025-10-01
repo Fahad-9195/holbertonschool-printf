@@ -1,11 +1,23 @@
 #include "main.h"
 #include <unistd.h>
 
+/**
+ * write_char - Write one character to stdout.
+ * @c: Character to print.
+ *
+ * Return: 1 on success, -1 on error.
+ */
 static int write_char(char c)
 {
 	return (write(1, &c, 1) == 1 ? 1 : -1);
 }
 
+/**
+ * write_str - Write a C string to stdout.
+ * @s: Pointer to string (may be NULL).
+ *
+ * Return: Number of chars written, or -1 on error.
+ */
 static int write_str(const char *s)
 {
 	int k = 0;
@@ -19,6 +31,12 @@ static int write_str(const char *s)
 	return (k);
 }
 
+/**
+ * print_unknown - Print '%' followed by an unknown specifier.
+ * @spec: The following character after '%'.
+ *
+ * Return: 2 on success, or -1 on error.
+ */
 static int print_unknown(char spec)
 {
 	if (write(1, "%", 1) == -1)
@@ -28,6 +46,13 @@ static int print_unknown(char spec)
 	return (2);
 }
 
+/**
+ * handle_spec - Dispatch a format specifier.
+ * @ap: Variadic arguments list.
+ * @spec: Format specifier character.
+ *
+ * Return: Count of printed chars, or -1 on error.
+ */
 static int handle_spec(va_list ap, char spec)
 {
 	if (spec == 'c')
@@ -47,6 +72,12 @@ static int handle_spec(va_list ap, char spec)
 	return (print_unknown(spec));
 }
 
+/**
+ * _printf - Simplified printf that supports %c, %s, %%, %d, %i.
+ * @format: Format string.
+ *
+ * Return: Number of printed characters, or -1 on error.
+ */
 int _printf(const char *format, ...)
 {
 	va_list ap;
