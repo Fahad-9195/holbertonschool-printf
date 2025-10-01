@@ -23,7 +23,9 @@ static int print_unknown(char spec)
 {
 	if (write(1, "%", 1) == -1)
 		return (-1);
-	return (write_char(spec));
+	if (write(1, &spec, 1) == -1)
+		return (-1);
+	return (2);
 }
 
 static int handle_spec(va_list ap, char spec)
@@ -68,7 +70,7 @@ int _printf(const char *format, ...)
 			continue;
 		}
 		i++;
-		if (!format[i]) /* trailing '%' */
+		if (!format[i])
 		{
 			total = -1;
 			break;
