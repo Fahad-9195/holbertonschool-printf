@@ -1,10 +1,21 @@
 #ifndef MAIN_H
 #define MAIN_H
+
 #include <stdarg.h>
 #include <unistd.h>
-int _printf(const char *format, ...);
-int handle_specifier(va_list *ap, char sp);
-int print_char(char c);
-int print_string(const char *s);
 
-#endif
+/**
+ * _printf - formatted output to stdout (subset)
+ * @format: format string
+ * Return: number of printed chars, or -1 on error
+ */
+int _printf(const char *format, ...);
+
+/**
+ * print_int - prints a signed integer from va_list (%d/%i)
+ * @ap: variadic arguments list
+ * Return: number of printed chars
+ */
+int print_int(va_list ap);
+
+#endif /* MAIN_H */
