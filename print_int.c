@@ -1,62 +1,57 @@
 #include "main.h"
 
 /**
- * print_number_core - prints a non-negative number in base 10
- * @n: non-negative value (0..)
- * Return: number of printed chars
- */
-static int print_number_core(unsigned long n)
-{
-	char buf[21]; /* enough for 64-bit, but we print int casted to long */
-	int i = 0, count = 0;
-
-	if (n == 0)
-	{
-		char c = '0';
-
-		if (write(1, &c, 1) != 1)
-			return (0);
-		return (1);
-	}
-
-	while (n > 0)
-	{
-		buf[i++] = (char)('0' + (n % 10));
-		n /= 10;
-	}
-
-	while (i--)
-	{
-		if (write(1, &buf[i], 1) != 1)
-			return (count);
-		count++;
-	}
-	return (count);
-}
-
-/**
- * print_int - prints a signed integer from va_list (%d/%i)
- * @ap: variadic arguments list
+ * print_int - print a signed decimal integer from va_list
+ * @ap: argument list (must provide an int)
  *
- * Return: number of printed chars
+ * Return: number of printed characters, or -1 on error
  */
 int print_int(va_list ap)
 {
-	long n = (long)va_arg(ap, int);
-	int count = 0;
-	char minus = '-';
+	long n, m;
+	char buf[20];
+	int idx = 0, written = 0;
+	char sign = 0;
+
+	n = (long)va_arg(ap, int);
 
 	if (n < 0)
 	{
-		if (write(1, &minus, 1) != 1)
-			return (0);
-		count++;
-		/* negate via unsigned to safely handle INT_MIN */
-		count += print_number_core((unsigned long)(-n));
+		sign = '-';
+		m = -n; /* long يمنع overflow عند INT_MIN */
 	}
 	else
 	{
-		count += print_number_core((unsigned long)n);
+		m = n;
 	}
-	return (count);
+
+	/* الحالة صفر */
+	if (m == 0)
+		buf[idx++] = '0';
+
+	/* خزّن الأرقام معكوسة */
+	while (m > 0)
+	{
+		buf[idx++] = (char)('0' + (m % 10));
+		m /= 10;
+	}
+
+	/* اطبع الإشارة إن وجدت */
+	if (sign)
+	{
+		if (write(1, &sign, 1) == -1)
+			return (-1);
+		written++;
+	}
+
+	/* اطبع الأرقام بالترتيب الصحيح */
+	while (idx > 0)
+	{
+		idx--;
+		if (write(1, &buf[idx], 1) == -1)
+			return (-1);
+		written++;
+	}
+
+	return (written);
 }

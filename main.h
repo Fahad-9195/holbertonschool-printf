@@ -4,18 +4,10 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-/**
- * _printf - formatted output to stdout (subset)
- * @format: format string
- * Return: number of printed chars, or -1 on error
- */
+/* printf clone (subset) */
 int _printf(const char *format, ...);
 
-/**
- * print_int - prints a signed integer from va_list (%d/%i)
- * @ap: variadic arguments list
- * Return: number of printed chars
- */
+/* print a signed decimal integer read from va_list */
 int print_int(va_list ap);
 
 #endif /* MAIN_H */

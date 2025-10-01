@@ -1,15 +1,16 @@
 #include "main.h"
 
 /**
- * _printf - simplified printf that supports %c, %s, %%, %d, %i
+ * _printf - simplified printf: supports %c, %s, %%, %d, %i
  * @format: format string
  *
- * Return: number of characters printed, or -1 on error
+ * Return: number of printed characters, or -1 on error
  *
- * Notes:
- * - If format == NULL -> -1
- * - If a '%' is the last character in the string -> -1 (no output)
- * - Unknown specifier: print the '%' then the character (as printf does)
+ * Rules for this project:
+ * - format == NULL => -1 (no output)
+ * - Trailing '%' (like "%") => -1 (no output)
+ * - Unknown specifier => print '%' then that character (like printf)
+ * - %s with NULL => "(null)"
  */
 int _printf(const char *format, ...)
 {
@@ -35,9 +36,9 @@ int _printf(const char *format, ...)
 			continue;
 		}
 
-		/* we've seen a '%' */
+		/* وجدنا '%' */
 		i++;
-		/* REQUIRED BY PROJECT: trailing '%' is an error */
+		/* Trailing '%' => خطأ حسب مصحّح المشروع */
 		if (format[i] == '\0')
 		{
 			va_end(ap);
@@ -84,8 +85,7 @@ int _printf(const char *format, ...)
 		}
 		else if (format[i] == 'd' || format[i] == 'i')
 		{
-			int n = va_arg(ap, int);
-			int printed = print_int(n); /* in print_int.c */
+			int printed = print_int(ap);
 
 			if (printed < 0)
 			{
@@ -96,7 +96,7 @@ int _printf(const char *format, ...)
 		}
 		else
 		{
-			/* Unknown specifier: print '%' then the char */
+			/* Unknown specifier: اطبع '%' ثم الرمز */
 			if (write(1, "%", 1) == -1 || write(1, &format[i], 1) == -1)
 			{
 				va_end(ap);
