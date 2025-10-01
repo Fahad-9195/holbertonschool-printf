@@ -1,112 +1,87 @@
 #include "main.h"
+#include <unistd.h>
 
-/**
- * _printf - simplified printf: supports %c, %s, %%, %d, %i
- * @format: format string
- *
- * Return: number of printed characters, or -1 on error
- *
- * Rules for this project:
- * - format == NULL => -1 (no output)
- * - Trailing '%' (like "%") => -1 (no output)
- * - Unknown specifier => print '%' then that character (like printf)
- * - %s with NULL => "(null)"
- */
+static int write_char(char c)
+{
+	return (write(1, &c, 1) == 1 ? 1 : -1);
+}
+
+static int write_str(const char *s)
+{
+	int k = 0;
+
+	while (s && s[k])
+	{
+		if (write(1, &s[k], 1) == -1)
+			return (-1);
+		k++;
+	}
+	return (k);
+}
+
+static int print_unknown(char spec)
+{
+	if (write(1, "%", 1) == -1)
+		return (-1);
+	return (write_char(spec));
+}
+
+static int handle_spec(va_list ap, char spec)
+{
+	if (spec == 'c')
+		return (write_char((char)va_arg(ap, int)));
+	if (spec == 's')
+	{
+		char *s = va_arg(ap, char *);
+
+		if (!s)
+			s = "(null)";
+		return (write_str(s));
+	}
+	if (spec == '%')
+		return (write_char('%'));
+	if (spec == 'd' || spec == 'i')
+		return (print_int(ap));
+	return (print_unknown(spec));
+}
+
 int _printf(const char *format, ...)
 {
 	va_list ap;
-	int i = 0, count = 0;
+	int i = 0, total = 0, n = 0;
 
 	if (!format)
 		return (-1);
 
 	va_start(ap, format);
-
-	while (format[i] != '\0')
+	while (format[i])
 	{
 		if (format[i] != '%')
 		{
-			if (write(1, &format[i], 1) == -1)
+			if (write_char(format[i]) == -1)
 			{
-				va_end(ap);
-				return (-1);
+				total = -1;
+				break;
 			}
-			count++;
+			total++;
 			i++;
 			continue;
 		}
-
-		/* وجدنا '%' */
 		i++;
-		/* Trailing '%' => خطأ حسب مصحّح المشروع */
-		if (format[i] == '\0')
+		if (!format[i]) /* trailing '%' */
 		{
-			va_end(ap);
-			return (-1);
+			total = -1;
+			break;
 		}
-
-		if (format[i] == 'c')
+		n = handle_spec(ap, format[i]);
+		if (n < 0)
 		{
-			char c = (char)va_arg(ap, int);
-
-			if (write(1, &c, 1) == -1)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count++;
+			total = -1;
+			break;
 		}
-		else if (format[i] == 's')
-		{
-			char *s = va_arg(ap, char *);
-			int j = 0;
-
-			if (!s)
-				s = "(null)";
-			while (s[j] != '\0')
-			{
-				if (write(1, &s[j], 1) == -1)
-				{
-					va_end(ap);
-					return (-1);
-				}
-				count++;
-				j++;
-			}
-		}
-		else if (format[i] == '%')
-		{
-			if (write(1, "%", 1) == -1)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count++;
-		}
-		else if (format[i] == 'd' || format[i] == 'i')
-		{
-			int printed = print_int(ap);
-
-			if (printed < 0)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count += printed;
-		}
-		else
-		{
-			/* Unknown specifier: اطبع '%' ثم الرمز */
-			if (write(1, "%", 1) == -1 || write(1, &format[i], 1) == -1)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count += 2;
-		}
+		total += n;
 		i++;
 	}
-
 	va_end(ap);
-	return (count);
+	return (total);
 }
