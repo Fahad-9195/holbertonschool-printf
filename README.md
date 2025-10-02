@@ -51,3 +51,26 @@ It prints formatted output to **stdout** using a format string composed of text 
 ### Build
 ```bash
 gcc -Wall -Wextra -Werror -pedantic -std=gnu89 *.c -o test_printf
+
+---
+
+## Build
+
+\`\`\`sh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format *.c -o test_printf
+\`\`\`
+
+## Supported specifiers
+
+- `%c`, `%s`, `%%`, `%d`, `%i`
+
+## Behavior & Edge cases
+- Returns `-1` and prints nothing if `format == NULL`.
+- Returns `-1` and prints nothing if the format string ends with a lone `%`.
+
+## Notes
+- Uses `stdarg.h` (va_list/va_start/va_arg/va_end)
+- Writes via `write(2)` only, no globals, ≤ 5 functions per file
+
+## Man page
+Run `man -l man/man_3_printf` to read the local manual page.
