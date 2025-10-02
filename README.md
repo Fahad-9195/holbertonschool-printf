@@ -74,3 +74,10 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format *.c -o test_printf
 
 ## Man page
 Run `man -l man/man_3_printf` to read the local manual page.
+
+---
+
+## Build
+
+```sh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format *.c -o test_printf
