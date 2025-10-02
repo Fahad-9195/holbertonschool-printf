@@ -117,3 +117,15 @@ int n = _printf("Hello %s %d%%\n", "world", 100);
 ## Testing
 - Compare with libc printf using -Wno-format
 - Keep local tests under tests/ (gitignored)
+
+---
+
+## Team / Collaboration
+
+This project is a two–person effort:
+
+- **Fahad Abdulaziz Alghamdi** — base specifiers `%c`, `%s`, `%%`, repository bootstrap.
+- **Yasir Musaad Alshabanah** — integer specifiers `%d`, `%i`, edge-cases & QA, `man_3_printf`.
+
+**Workflow:** each feature lands on a dedicated branch → Pull Request → partner review → merge to `main`.  
+**Environment:** Ubuntu 20.04, `gcc -Wall -Werror -Wextra -pedantic -std=gnu89` (and `-Wno-format` for local comparisons).
