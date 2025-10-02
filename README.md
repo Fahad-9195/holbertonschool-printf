@@ -103,3 +103,17 @@ _printf("Hello %s %d%%\\n", "world", 100);
 
 ## Man page
 man -l man/man_3_printf
+
+## Requirements
+- Ubuntu 20.04
+- gcc with: -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format
+
+## Examples
+\`\`\`c
+/* prints: Hello world 100% */
+int n = _printf("Hello %s %d%%\n", "world", 100);
+\`\`\`
+
+## Testing
+- Compare with libc printf using -Wno-format
+- Keep local tests under tests/ (gitignored)
