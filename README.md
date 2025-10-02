@@ -129,3 +129,25 @@ This project is a two–person effort:
 
 **Workflow:** each feature lands on a dedicated branch → Pull Request → partner review → merge to `main`.  
 **Environment:** Ubuntu 20.04, `gcc -Wall -Werror -Wextra -pedantic -std=gnu89` (and `-Wno-format` for local comparisons).
+
+
+---
+
+## Description
+Minimal `_printf` supporting %c, %s, %%, %d, %i with write(2).
+
+## Requirements
+Ubuntu 20.04, gcc, no globals, ≤ 5 functions per file.
+
+## Build
+```sh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format *.c -o test_printf
+```
+
+## Example
+```c
+_printf("Hello %s %d%%\\n", "world", 100);
+```
+
+## Man page
+man -l man/man_3_printf
